@@ -1,1 +1,1 @@
-# Image search Attraction layer FCC challenge
+# Backend Challenges boilerplate - package.json
