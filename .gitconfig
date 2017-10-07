@@ -1,2 +1,2 @@
 [core]
-	excludesfile = /config.js
+	excludesfile = /etc/.gitignore-global
