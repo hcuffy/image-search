@@ -2,6 +2,8 @@
   "name": "fcc-learn-npm-package-json",
   "dependencies": {
     "express": "^4.16.1",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.31",
     "unsplash-api": "^1.2.0"
   },
   "main": "server.js",

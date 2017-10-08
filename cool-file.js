@@ -1,35 +1,57 @@
 var unsplash = require('unsplash-api');
 var config = require('./config.js');
-
+var data = require('./database.js');
 var clientId = process.env.Client_ID || config.keys.Client_ID;
-
 unsplash.init(clientId);
 
+var db;
 
-const https = require('https');
+data.connectToServer(function (err) {
+    db = data.getDB();
 
- 
+});
 
 module.exports.get = function (req, res) {
 
-  var search = req.params[0];
-     console.log(search);
-  
-  var offset = req.query.offset;
-  
-    console.log(offset);
+    var search = req.params[0];
+    var offset = req.query.offset;
+    var isodate = new Date().toISOString()
 
-unsplash.searchPhotos('dog', [1, 2, 3], 1, 5, function(error, photos, link) {
-  
-  //var num = [].concat.apply(photos);
+    var term = {
+        'Term': search,
+        'Date': isodate
+    }
 
-  
-  //var test = photos.substring(1, num);
-  
-  res.json(photos)
-  
-});
-  
-  
-  
+    db.collection('latestsearch').insert(term, function (err, doc) {
+
+        if (err) throw err;
+        console.log('Inserted Document');
+
+    });
+
+    unsplash.searchPhotos(search, [1, 2, 3], 1, offset, function (error, photos, link) {
+        var _ = require('lodash');
+
+        var data = _.map(photos, (entry) => {
+
+            return {
+                URL: entry.urls.small,
+                Thumbnail: entry.urls.thumb,
+                Download: entry.links.download,
+                Publisher: entry.user.links.html
+            };
+
+        });
+
+        if (data.length === 0) {
+            res.json({
+                Error: 'No Images found try another search Term'
+            })
+        } else {
+
+            res.json(data)
+        }
+
+    });
+
 }

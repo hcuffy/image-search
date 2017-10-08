@@ -8,7 +8,7 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
-
+var latest_search= require('./searchterms.js');
 var search_engine = require('./cool-file.js');
 
 if (!process.env.DISABLE_XORIGIN) {
@@ -36,30 +36,10 @@ app.route('/_api/package.json')
   });
 //////////
 
-app.get({
-  
-    path: '/',
-    handler: function (request, reply) {
-      console.log("test");
-        Request.get('https://api.qwant.com/api/search/images?count=20&offset=1&q=cars', function (error, response, body) {
-            if (error) {
-                throw error;
-            }
- 
-            const data = JSON.parse(body);
-          response.json(data);
-          console.log(data);
-            reply.view('index', { result: data });
-        });
-    }
-});
+app.get('/api/latest/imagesearch/', latest_search);
 
 
 app.get('/api/imagesearch/*', search_engine.get);  
-
-//app.get('/', search_engine.get);
-
-
 
 //////////
 
